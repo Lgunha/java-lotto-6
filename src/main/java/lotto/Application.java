@@ -50,7 +50,8 @@ public class Application {
             my_lotto[i] = lotto_numbers;
         }
 
-        lotto.check(my_lotto,bill);
+        //결과 확인
+        lotto.check(my_lotto,bill,bonus);
 
 
 //        "3개 일치 (5,000원) - 1개",

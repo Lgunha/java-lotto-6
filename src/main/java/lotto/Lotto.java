@@ -31,22 +31,25 @@ public class Lotto {
     }
 
     //로또 당첨 확인
-    public void check(List<Integer>[] my_lotto,int bill){
+    public void check(List<Integer>[] my_lotto,int bill,int bonus){
         int[] result = new int[my_lotto.length];
         for(int i=0; i<my_lotto.length;i++){
-            result[i] = check2(my_lotto[i]);
+            result[i] = check2(my_lotto[i],bonus);
         }
         int money = count_result(result);
         percent(money, bill);
 
     }
     //로또 당첨 확인 2
-    private int check2(List<Integer> check){
+    private int check2(List<Integer> check, int bonus){
         int cnt = 0;
         for(int num : this.numbers){
-          if(check.contains(num)){
+            if(check.contains(num)){
               cnt++;
-          }
+            }
+        }
+        if(cnt==5 && check.contains(bonus)){
+            return -1;  //5개당첨 + 보너스 당첨이면 -1 리턴
         }
         return cnt;
     }
@@ -54,12 +57,13 @@ public class Lotto {
     //당첨 정리
     private int count_result(int[] result){
         HashMap<Integer, Integer> cnt_map = new HashMap<Integer,Integer>();
+        cnt_map.put(-1,0);
         cnt_map.put(3,0);
         cnt_map.put(4,0);
         cnt_map.put(5,0);
         cnt_map.put(6,0);
         for(int cnt: result){
-            if(cnt > 2){
+            if(cnt > 2 || cnt==-1){
                 cnt_map.put(cnt,cnt_map.get(cnt)+1);;
             }
         }
@@ -67,10 +71,10 @@ public class Lotto {
         System.out.println("3개 일치 (5,000원) - "+cnt_map.get(3)+"개");
         System.out.println("4개 일치 (50,000원) - "+cnt_map.get(4)+"개");
         System.out.println("5개 일치 (1,500,000원) - "+cnt_map.get(5)+"개");
-        System.out.println("5개 일치, 보너스 볼 일치 (30,000,000원) - "+cnt_map.get(5)+"개");
+        System.out.println("5개 일치, 보너스 볼 일치 (30,000,000원) - "+cnt_map.get(-1)+"개");
         System.out.println("6개 일치 (2,000,000,000원) - "+cnt_map.get(6)+"개");
 
-        int money = cnt_map.get(3)*5000+cnt_map.get(4)*50000+cnt_map.get(5)*1500000+cnt_map.get(6)*200000000;
+        int money = cnt_map.get(3)*5000 + cnt_map.get(4)*50000 + cnt_map.get(5)*1500000 + cnt_map.get(-1)*30000000 + cnt_map.get(6)*200000000;
         return  money;
     }
     private void percent(int money, int bill){
